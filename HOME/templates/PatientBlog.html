@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-3">
+    <h2>Posted Probelems</h2>
+    <p>Create a media object with the .media and .media-body classes:</p>
+   
+    <div class="media border p-3">
+      <img src="{% static 'images/UserAvatar.jpg' %}" alt='ProfilePic' class="mr-3 mt-1 rounded-circle" style="width: 60px;">
+      <div class="media-body">
+        <h4>{{user.username}} <small><i>Posted on February 21, 2016</i></small></h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>      
+      </div>
+    </div>
+    
+  </div>
+  {% endblock %}

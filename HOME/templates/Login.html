@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class='container  pl-3 pu-3'>
+        <form method="POST">
+        {% csrf_token %}
+            <fieldset class="form-group border p-3 m-3">
+                <legend>Login Here</legend>
+                <div class="form-group">
+                    {{form | crispy}}
+                </div>
+                <div class='form-group'>
+                    <input type="submit" class="btn btn-info" value="Login">
+                </div>
+            </fieldset>
+        </form>
+        <div class='border-top p-3'>
+            <small class='text-muted'>
+              Need an account?<a href='{% url "patient_signup" %}' class='ml-3'>Sign Up</a>
+            </small>
+        </div>
+    </div>
+{% endblock %}
