@@ -77,12 +77,12 @@ WSGI_APPLICATION = 'VoicePrescription.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'VoicePrescription',
-        'USER':'postgres',
+        'USER':'root',
         'PASSWORD':'root',
         'HOST':'LOCALHOST',
-        'PORT':'5432'
+        'PORT':'3306'
     }
 }
 
@@ -135,3 +135,20 @@ CRISPY_TEMPLATE_PACK='bootstrap4'
 
 MEDIA_ROOT=os.path.join(BASE_DIR,'/media/')
 MEDIA_URL='/media/'
+
+
+AUTH_USER_MODEL='HOME.Users'
+
+
+LOGIN_REDIRECT_URL='HomePage'
+LOGOUT_REDIRECT_URL='HomePage'
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'kadampallypraneeth987@gmail.com'
+EMAIL_HOST_PASSWORD = '21022000'
+EMAIL_USE_SSL=False

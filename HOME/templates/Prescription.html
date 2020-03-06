@@ -1,5 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+{% load static %}
+<!DOCTYPE html>
     <head>
         <title>Title</title>
         <style type="text/css">
@@ -39,12 +39,15 @@
     <body>
         <div class='wrapper'>
             <div class='header'>
-                <p class='title'>Invoice # </p>
+                <a class="navbar-brand" href="{% url 'HomePage' %}">
+                    <img src="{% static 'images/Health_is_Wealth1_png_2426x.webp' %}" width="125" height="50" alt="logo" class='rounded'>
+                </a>
+                <p class='title'>Medical Prescription </p>
             </div>
         <div>
         <div class='details'>
-            Bill to: <br/>
-            Amount:  <br/>
+            Doctor Name: <br/>
+            Specialisation:  <br/>
             Date: 
             <hr class='hrItem' />
         </div>

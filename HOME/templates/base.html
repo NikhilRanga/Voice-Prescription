@@ -38,6 +38,16 @@
               <a class="nav-link" href="{% url 'UserBlog' %}" tabindex="-1" aria-disabled="true">Profile</a>
             </li>
             {% endif %}
+            {% if user.is_authenticated and user.role == 1 %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'ComplaintRegistration' %}" tabindex="-1" aria-disabled="true">Complaint</a>
+            </li>
+            {% endif %}
+            {% if user.is_authenticated and user.role == 2 %}
+            <li class='nav-item'>
+              <a class='nav-link' href="{% url 'DoctorComplaint' %}" tabindex='-1' aria-disabled='true'>Complaints</a>
+            </li>
+            {% endif %}
             {% if user.is_authenticated %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'Logout' %}" tabindex="-1" aria-disabled="true">Logout</a>

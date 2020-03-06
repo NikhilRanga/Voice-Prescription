@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<script>
+    window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    const recognition = new window.SpeechRecognition();
+ </script>
+<div class=' pl-4'>
+    <form class='form-group' method='POST' enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class='container mt-3 pd-3'>
+          <fieldset class='form-group border p-3 m-3'>  
+            <legend>
+                Complaint Form
+            </legend>
+            <div class='form-group'>
+                <label for='Compalint'>Suffering form</label>
+                <input type="text" x-webkit-speech  name='Complaint'>
+            </div>
+            <div class='form-group'>
+                <label for='Symptom1'>Suffering form</label>
+                <input type="text" placeholder="Symptom1" id='Symptom1' name='Symptom1'>
+            </div>
+            <div class='form-group'>
+                <label for='Symptom2'>Symptom1</label>
+                <input type="text" placeholder="Symptom2" id='Symptom2' name='Symptom2'>
+            </div>
+            <div class='form-group'>
+              <input type="submit" class="btn btn-info" value="Submit">
+            </div>
+            <div class='form-group'>
+              <input tyep='submit' class='btn btn-success' value='Cancel'>
+            </div>
+            </div>
+     </fieldset>
+    </form>
+</div>
+{% endblock %}

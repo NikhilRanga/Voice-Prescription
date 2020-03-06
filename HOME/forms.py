@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Users,Doctor
+from .models import Users
+from .models import Doctor,Complaint
 
 
 class UserRegisterForm(UserCreationForm):
@@ -9,12 +10,16 @@ class UserRegisterForm(UserCreationForm):
     email=forms.EmailField(),
     class Meta:
         model=Users
-        fields=['first_name','last_name','email','username','password1','password2','age','gender']
+        fields=['first_name','last_name','email','username','password1','password2','age','gender','phoneno','address']
 
 
 class DoctorRegisterForm(forms.ModelForm):
     class Meta:
         model=Doctor
         fields=['Education','Specialization','AadharNo','License']
-
+        exclude=['user']
         
+class ComplaintRegisterForm(forms.ModelForm):
+    class Meta:
+        model=Complaint
+        fields=['Complaint_Name','Symptom1','Symptom2']

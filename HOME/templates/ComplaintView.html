@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class='section'>
+    <h2>Complaints</h2>
+    <ul>
+        {%for complaint in complaints %}
+        <a href="#">{{complaint.Complaint_Name}}</a><br> 
+        <li>{{complaint.Sympton1}}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
