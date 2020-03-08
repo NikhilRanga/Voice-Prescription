@@ -14,8 +14,9 @@ import speech_recognition as sr
 from VoicePrescription.settings import EMAIL_HOST_USER
 import datetime
 import nexmo
+from VoicePrescription.settings import API_KEY,SECRET_KEY
 
-client = nexmo.Client(key='d0b6e5c8', secret='PB26ooSQuHpBUCly')
+client = nexmo.Client(key=API_KEY, secret=SECRET_KEY)
 
 # Create your views here.
 def HomePage(request):
