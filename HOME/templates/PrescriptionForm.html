@@ -13,8 +13,8 @@
                  <div class='col pl-3'>
                   <div class='form-group'>
                     <label for='Description'>Prescription</label>
-                    <input type='text' id='Education' name='Education'>
-                    
+                    <input type='text' id='Description' name='Description'>
+                    <a href="{% url 'recording' %}" class="btn btn-info" role="button">Record</a>
                     </div>
                     <div class='form-group'>
                       <input type="submit" class="btn btn-info" value="Submit">
@@ -23,6 +23,9 @@
                       <input tyep='submit' class='btn btn-success' value='Cancel'>
                     </div>
                   </div>
+                  {% if flag  %}
+                  <a href="{% url 'pdf' %}" class="btn btn-info" role="button">Generate PDF</a>
+                  {% endif %}
          </fieldset>
         </form>
-{% endblock}
+{% endblock %}

@@ -17,8 +17,8 @@ class DoctorRegisterForm(forms.ModelForm):
     class Meta:
         model=Doctor
         fields=['Education','Specialization','AadharNo','License']
-        exclude=['user']
-        
+
+    
 class ComplaintRegisterForm(forms.ModelForm):
     class Meta:
         model=Complaint

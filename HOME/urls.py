@@ -18,7 +18,9 @@ urlpatterns = [
     path('Profile',views.UserBlog,name='UserBlog'),
     path('ComplaintRegistration',views.ComplaintRegistration,name='ComplaintRegistration'),
     path('ComplaintView',ComplaintListView.as_view(),name='ComplaintView'),
-    path('pdf',views.GeneratePdf,name='pdf')
+    path('pdf',views.GeneratePdf,name='pdf'),
+    path('recording',views.speech_to_text,name='recording'),
+    path('PrescriptionForm',views.PrescriptionForm,name='PrescriptionForm')
    
 ]
 
