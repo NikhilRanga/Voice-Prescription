@@ -2,7 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.db import models
 from django.shortcuts import reverse
-from VoicePrescription.settings import TIME_ZONE
 
 
 class Users(AbstractUser):
@@ -27,15 +26,23 @@ class Users(AbstractUser):
     def __str__(self):
         return self.username
 
-class Patient(models.Model):
-    user=models.OneToOneField(Users,on_delete=models.CASCADE,primary_key=True)
-
 class Doctor(models.Model):
     user=models.OneToOneField(Users,on_delete=models.CASCADE,primary_key=True)
     Education=models.CharField(max_length=500)
     Specialization=models.CharField(max_length=500)
     AadharNo=models.IntegerField()
     License=models.FileField(upload_to='License')
+
+    def __str__(self):
+        return self.user.username
+
+class Patient(models.Model):
+    user=models.OneToOneField(Users,on_delete=models.CASCADE,primary_key=True)
+    doctor=models.OneToOneField(Doctor,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
+
 
 class Complaint(models.Model):
     patient=models.ForeignKey(Patient,on_delete=models.CASCADE)

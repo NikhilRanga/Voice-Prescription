@@ -2,9 +2,7 @@ from django.shortcuts import render,redirect,HttpResponse
 from django.contrib import messages
 from .forms import UserRegisterForm
 from .forms import DoctorRegisterForm,ComplaintRegisterForm
-from .models import Users
-from .models import Doctor
-from .models import Patient,Complaint,Prescription
+from .models import Users,Doctor,Patient,Complaint,Prescription
 from django import forms
 from .utils import render_to_pdf
 from django.views.generic import ListView,DetailView
@@ -32,6 +30,7 @@ def UserBlog(request):
 
 
 def patient_signup(request):
+    doctors=Doctor.objects.all()
     if request.method=='POST':
         userform=UserRegisterForm(request.POST,prefix='userform')
         if userform.is_valid():
@@ -39,7 +38,9 @@ def patient_signup(request):
             user.role = Users.PATIENT
             user.age = request.POST.get('Age')
             user.save()
-            patient = Patient(user=user)
+            user1=Users.objects.get(username=request.POST.get('Doctor'))
+            doctor=Doctor.objects.get(user=user1)
+            patient = Patient(user=user,doctor=doctor)
             patient.save()
             username = userform.cleaned_data.get('username')
             messages.success(request,f'Account created for {username}')
@@ -47,14 +48,13 @@ def patient_signup(request):
     else:
         userform = UserRegisterForm(prefix='userform')
         # patientform = PatientSignupForm(request.POST, prefix='patientform')
-        return render(request=request, template_name='Patient_Signup.html',context={'form': userform})
+        return render(request=request, template_name='Patient_Signup.html',context={'form': userform,'doctors':doctors})
 
 
 def doctor_signup(request):
     if request.method=='POST':
         userform=UserRegisterForm(request.POST,request.FILES,prefix='userform')
-        doctorform=DoctorRegisterForm(request.POST,request.FILES,prefix='doctorform')
-        if userform.is_valid() and doctorform.is_valid() :
+        if userform.is_valid():
                 user = userform.save()
                 user.role = Users.DOCTOR
                 user.save()
@@ -64,6 +64,9 @@ def doctor_signup(request):
                 doctor.Specialization=request.POST.get('Specialization')
                 doctor.AadharNo=request.POST.get('AadharNo')
                 doctor.save()
+                if ValueError:
+                    user=Users.objects.all().last()
+                    user.delete()
                 username = userform.cleaned_data.get('username')
                 messages.success(request,f'Account created for {username}')
                 return redirect('Login')
@@ -71,8 +74,7 @@ def doctor_signup(request):
             print(userform.errors)
     else:
         userform = UserRegisterForm(prefix='userform')
-        doctorform = DoctorRegisterForm(request.POST,request.FILES,prefix='doctorform')
-        context={'form': userform,'doctorform':doctorform}
+        context={'form': userform}
         return render(request,'Doctor_Signup.html',context)
 
 
@@ -134,6 +136,7 @@ def speech_to_text(request):
     r=sr.Recognizer()
     mic=sr.Microphone()
     with mic as source:
+        r.adjust_for_ambient_noise(source)
         audio=r.record(source,duration=10)
     try:
         output=r.recognize_google(audio)
