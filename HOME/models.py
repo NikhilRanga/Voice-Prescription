@@ -19,9 +19,9 @@ class Users(AbstractUser):
 
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES,null=True,blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    age=models.IntegerField(null=True)
-    phoneno=models.BigIntegerField(null=True)
-    address=models.TextField(null=True)
+    age=models.IntegerField()
+    phoneno=models.BigIntegerField(null=True,blank=True)
+    address=models.TextField(null=True,blank=True)
 
     def __str__(self):
         return self.username
@@ -32,6 +32,7 @@ class Doctor(models.Model):
     Specialization=models.CharField(max_length=500)
     AadharNo=models.IntegerField()
     License=models.FileField(upload_to='License')
+    Signature=models.ImageField(upload_to='Signature')
 
     def __str__(self):
         return self.user.username
@@ -45,10 +46,13 @@ class Patient(models.Model):
 
 
 class Complaint(models.Model):
+    Doctor=models.ForeignKey(Doctor,on_delete=models.CASCADE)
     patient=models.ForeignKey(Patient,on_delete=models.CASCADE)
     Complaint_Name=models.CharField(max_length=500)
     Symptom1=models.CharField(max_length=500)
     Symptom2=models.CharField(max_length=500)
+    Description=models.TextField()
+    Date=models.DateTimeField(auto_now=True)
 
     def _str_(self):
         return self.Complaint_Name

@@ -7,7 +7,8 @@
     <section class="media border p-3 mt-2">
         <section class="media-body p-3">
             <h4>Complaint:<a href="#">{{complaint.Complaint_Name}}</a></h4><small>Posted on {{complaint.Date | date}}</small>
-            <h6>Registered Doctor:{{patient.doctor.user.username}},{{patient.doctor.Specialization}}</h6>
+            <h6>Registered patient:{{complaint.patient.user.username}}</h6>
+            <a href="{% url 'PrescriptionForm' %}"><button class='btn btn-success'>Advice Prescription</button></a>
         </section>
     </section>
     {%endfor%}

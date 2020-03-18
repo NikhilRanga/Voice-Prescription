@@ -7,7 +7,7 @@ from django import forms
 from .utils import render_to_pdf
 from django.views.generic import ListView,DetailView
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
+from django.core.mail import send_mail,EmailMessage,EmailMultiAlternatives
 import speech_recognition as sr
 from VoicePrescription.settings import EMAIL_HOST_USER
 import datetime
@@ -24,9 +24,11 @@ def HomePage(request):
 def UserRegister(request):
     return render(request,'UserRegister.html')
 
-
+@login_required
 def UserBlog(request):
-    return render(request,'PatientBlog.html',{})
+    user=Users.objects.get(id=request.user.id)
+    patient=Patient.objects.get(user=request.user)
+    return render(request,'PatientBlog.html',{'user':user,'patient':patient})
 
 
 def patient_signup(request):
@@ -36,7 +38,6 @@ def patient_signup(request):
         if userform.is_valid():
             user = userform.save()
             user.role = Users.PATIENT
-            user.age = request.POST.get('Age')
             user.save()
             user1=Users.objects.get(username=request.POST.get('Doctor'))
             doctor=Doctor.objects.get(user=user1)
@@ -54,27 +55,23 @@ def patient_signup(request):
 def doctor_signup(request):
     if request.method=='POST':
         userform=UserRegisterForm(request.POST,request.FILES,prefix='userform')
-        if userform.is_valid():
-                user = userform.save()
+        doctorform=DoctorRegisterForm(request.POST,request.FILES,prefix='doctorform')
+        if userform.is_valid() and doctorform.is_valid():
+                user = userform.save(commit=False)
                 user.role = Users.DOCTOR
                 user.save()
-                doctor=Doctor(user=user)
-                doctor.Education=request.POST.get('Education')
-                doctor.License=request.FILES.get('License')
-                doctor.Specialization=request.POST.get('Specialization')
-                doctor.AadharNo=request.POST.get('AadharNo')
+                doctor=doctorform.save(commit=False)
+                doctor.user=user
                 doctor.save()
-                if ValueError:
-                    user=Users.objects.all().last()
-                    user.delete()
-                username = userform.cleaned_data.get('username')
+                username=userform.cleaned_data.get('username')
                 messages.success(request,f'Account created for {username}')
                 return redirect('Login')
         else:
             print(userform.errors)
     else:
         userform = UserRegisterForm(prefix='userform')
-        context={'form': userform}
+        doctorform=DoctorRegisterForm(prefix='doctorform')
+        context={'form': userform,'dform':doctorform}
         return render(request,'Doctor_Signup.html',context)
 
 
@@ -88,11 +85,13 @@ def GeneratePdf(request):
     prescription=Prescription.objects.get(Doctor=doctor)
     Description=prescription.Description
     Specialization=doctor.Specialization
+    image=doctor.Signature.url
     data = { 
         'DoctorName':DoctorName,
         'Date':Date,
         'Specialization': Specialization,
-        'Description': Description
+        'Description': Description,
+        'image':image
     }
     pdf = render_to_pdf('Prescription.html', data)
     return HttpResponse(pdf, content_type='application/pdf')
@@ -101,24 +100,22 @@ def GeneratePdf(request):
 @login_required
 def ComplaintRegistration(request):
     if request.method =='POST':
-            patient=Patient(user=request.user)
-            complaint=Complaint(patient=patient)
-            complaint.Complaint_Name=request.POST.get("Complaint")
-            complaint.Symptom1=request.POST.get('Symptom1')
-            complaint.Symptom2=request.POST.get('Symptom2')
-            complaint.save()    
+        complaintform=ComplaintRegisterForm(request.POST,prefix='complaintform')
+        if complaintform.is_valid():
+            complaint=complaintform.save(commit=False)
+            complaint.patient=Patient.objects.get(user=request.user)
+            complaint.save()
             messages.success(request,f'Complaint Registered')
             return redirect('HomePage')
     else:
-        return render(request,'ComplaintRegistration.html',{})
+        complaintform=ComplaintRegisterForm(prefix='complaintform')
+        return render(request,'ComplaintRegistration.html',{'complaintform':complaintform})
 
-class ComplaintListView(ListView):
-    model=Complaint
+def ComplaintListView(request):
+    patient=Patient.objects.get(user=request.user)
+    complaints=Complaint.objects.filter(patient=patient).values()
     template_name='ComplaintView.html'
-    context_object_name='complaints'
-
-    def get_queryset(self):
-       return super(ComplaintListView, self).get_queryset().filter(patient=self.request.user.patient)
+    return render(request,template_name,context={'complaints':complaints,'patient':patient})
 
 
 class ComplaintDetailView(DetailView):
@@ -139,46 +136,56 @@ def speech_to_text(request):
         r.adjust_for_ambient_noise(source)
         audio=r.record(source,duration=10)
     try:
-        output=r.recognize_google(audio)
+        output = " " + r.recognize_google(audio)
     except sr.UnknownValueError:
-            print('Could not Understand try again')
+        output = "Could not understand audio"
+    except sr.RequestError as e:
+        output = "Could not request results; {0}".format(e)
     Description=output
     Description.capitalize()
     patient=Patient.objects.all().first()
-    prescription=Prescription(Doctor=request.user.doctor,patient=patient)
+    user=request.user
+    doctor=Doctor.objects.get(user=user)
+    prescription=Prescription(Doctor=doctor,patient=patient)
     prescription.Description=Description
     prescription.save()
+    DoctorName=request.user.username
+    Date=datetime.date.today
+    doctor=Doctor.objects.get(user=request.user)
+    prescription=Prescription.objects.get(Doctor=doctor)
+    Description=prescription.Description
+    Specialization=doctor.Specialization
+    data = { 
+        'DoctorName':DoctorName,
+        'Date':Date,
+        'Specialization': Specialization,
+        'Description': Description
+    }
+    pdf = render_to_pdf('Prescription.html', data)
+    subject='Prescription'
+    from_=EMAIL_HOST_USER
+    to=['kadampallypraneeth987@gmail.com']
+    body='Prescription'
+    email=EmailMultiAlternatives(subject,body,from_,to)
+    email.attach('Prescription.pdf',pdf,'application/pdf')
+    email.send()
     data={
         'flag':True
     }
     return render(request,'PrescriptionForm.html',data)
 
 
+def DoctorComplaintView(request):
+    doctor=Doctor.objects.get(user=request.user)
+    complaints=Complaint.objects.filter(Doctor=doctor)
+    template_name='DoctorComplaintView.html'
+    return render(request,template_name,{"complaints":complaints,'doctor':doctor})
 
 
-
-
-
-
-class DoctorComplaintView(ListView):
-    model=Complaint
-    template_name='DoctorComplaint.html'
-
-
-def sendmail(request):
-    send_mail(
-    'test',
-    'Hello.',
-    EMAIL_HOST_USER,
-    ['saivamshi.k.24@gmail.com'],
-    fail_silently=False,
-    )
 
 def sendsms():
     client.send_message({
-    'from': 'Health is Wealth',
+    'from': 'Nexmo',
     'to': '918639783590',
-    'text': 'Your Prescritpion has been sent to your registered Mail.Thank you for using Health is Wealth',
+    'text': 'Your Prescritpion has been sent to your registered Mail.\n Thank you for using Health is Wealth',
 })
-
-
