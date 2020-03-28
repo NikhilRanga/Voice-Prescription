@@ -15,12 +15,13 @@ urlpatterns = [
     path('doctor_signup',views.doctor_signup,name='doctor_signup'),
     path('Login',auth_views.LoginView.as_view(template_name='Login.html'),name='Login'),
     path('Logout',auth_views.LogoutView.as_view(),name='Logout'),
-    path('Profile',views.UserBlog,name='UserBlog'),
+    path('PatientProfile',views.PatientProfile,name='PatientProfile'),
+    path('DoctorProfile',views.DoctorProfile,name='DoctorProfile'),
     path('ComplaintRegistration',views.ComplaintRegistration,name='ComplaintRegistration'),
     path('ComplaintView',views.ComplaintListView,name='ComplaintView'),
     path('pdf',views.GeneratePdf,name='pdf'),
-    path('recording',views.speech_to_text,name='recording'),
-    path('PrescriptionForm',views.PrescriptionForm,name='PrescriptionForm'),
+    path('recording/<int:primary_key>/',views.speech_to_text,name='recording'),
+    path('PrescriptionForm/<int:primary_key>/',views.PrescriptionForm,name='PrescriptionForm'),
     path('DoctorComplaintView',views.DoctorComplaintView,name='DoctorComplaintView')
    
 ]

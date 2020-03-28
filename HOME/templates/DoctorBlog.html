@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block css %}
+<link rel='stylesheet' href='{% static "css/main.css" %}' type='text/css'>
+{% endblock %}
+{% block content %}
+<div class="container mt-3 p-3">
+    <h2 class='text-capitalize'>{{user.username}}'s Profile</h2>
+    <p>Your Profile Description:</p>
+    <section class="media border p-3 ">
+      <img src="{% static 'images/UserAvatar.jpg' %}" alt='ProfilePic' class="mr-3 mt-1 rounded-circle" style="width: 150px;">
+      <section class="media-body p-2 text-center">
+        <h4 class='text-capitalize'>{{user.get_full_name}} <small><i></i></small></h4>
+        <h6>Age:{{user.age}}</h6>
+        <h6>Gender:{{user.gender}}</h6>
+        <h6>Email:{{user.email}}</Address></h6>
+        <h6>Role:Doctor</h6>
+        <h6>Phone No:{{user.phoneno}}</h6>
+        <h6>Address:{{user.address}}</h6> 
+        <h6>AadharNo:{{doctor.AadharNo}}</h6>   
+        <h6>Licence:<a href={{doctor.License.url}}>Licence</a></h6>  
+        <h6>Signature:<a href={{doctor.Signature.url}}>Signature</a></h6>
+      </div>
+    </div>
+    
+  </div>
+  {% endblock %}

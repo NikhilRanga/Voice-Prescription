@@ -39,7 +39,7 @@ class Doctor(models.Model):
 
 class Patient(models.Model):
     user=models.OneToOneField(Users,on_delete=models.CASCADE,primary_key=True)
-    doctor=models.OneToOneField(Doctor,on_delete=models.CASCADE)
+    doctor=models.ForeignKey(Doctor,on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.username
@@ -59,6 +59,7 @@ class Complaint(models.Model):
 
 
 class Prescription(models.Model):
+    complaint=models.OneToOneField(Complaint,on_delete=models.CASCADE,primary_key=True)
     patient=models.ForeignKey(Patient,on_delete=models.CASCADE)
     Doctor=models.ForeignKey(Doctor,on_delete=models.CASCADE)
     Date=models.DateTimeField(auto_now=True)

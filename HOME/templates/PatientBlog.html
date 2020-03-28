@@ -4,9 +4,9 @@
 <link rel='stylesheet' href='{% static "css/main.css" %}' type='text/css'>
 {% endblock %}
 {% block content %}
-<div class="container mt-3">
-    <h2>Your Profile</h2>
-    <p>Create a media object with the .media and .media-body classes:</p>
+<div class="content-section mt-3 p-3">
+    <h2>{{user.username}}'s Profile</h2>
+    <p>Your Profile Description:</p>
     <section class="media border p-3">
       <img src="{% static 'images/UserAvatar.jpg' %}" alt='ProfilePic' class="mr-3 mt-1 rounded-circle" style="width: 80px;">
       <section class="media-body p-2">
@@ -14,6 +14,7 @@
         <h6>Age:{{user.age}}</h6>
         <h6>Gender:{{user.gender}}</h6>
         <h6>Email:{{user.email}}</Address></h6>
+        <h6>Role:Patient</h6>
         <h6>Registered Doctor:{{patient.doctor.user.username}},{{patient.doctor.Specialization}}</h6>
         <h6>Phone No:{{user.phoneno}}</h6>
         <h6>Address:{{user.address}}</h6>      

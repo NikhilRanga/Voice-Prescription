@@ -14,6 +14,7 @@ import datetime
 import nexmo
 from VoicePrescription.settings import API_KEY,SECRET_KEY
 
+
 client = nexmo.Client(key=API_KEY, secret=SECRET_KEY)
 
 # Create your views here.
@@ -25,10 +26,16 @@ def UserRegister(request):
     return render(request,'UserRegister.html')
 
 @login_required
-def UserBlog(request):
+def PatientProfile(request):
     user=Users.objects.get(id=request.user.id)
-    patient=Patient.objects.get(user=request.user)
+    patient=Patient.objects.get(user=user)
     return render(request,'PatientBlog.html',{'user':user,'patient':patient})
+
+@login_required
+def DoctorProfile(request):
+    user=Users.objects.get(id=request.user.id)
+    doctor=Doctor.objects.get(user=request.user)
+    return render(request,'DoctorBlog.html',{'user':user,'doctor':doctor})
 
 
 def patient_signup(request):
@@ -104,6 +111,7 @@ def ComplaintRegistration(request):
         if complaintform.is_valid():
             complaint=complaintform.save(commit=False)
             complaint.patient=Patient.objects.get(user=request.user)
+            complaint.Doctor=Doctor.objects.get(user=complaint.patient.doctor)
             complaint.save()
             messages.success(request,f'Complaint Registered')
             return redirect('HomePage')
@@ -118,17 +126,12 @@ def ComplaintListView(request):
     return render(request,template_name,context={'complaints':complaints,'patient':patient})
 
 
-class ComplaintDetailView(DetailView):
-    model=Complaint
-    template_name='ComplaintDetail.html'
-    
+@login_required
+def PrescriptionForm(request,primary_key):
+    return render(request,'PrescriptionForm.html',{'primary_key':primary_key})
 
 @login_required
-def PrescriptionForm(request):
-    return render(request,'PrescriptionForm.html',{})
-
-@login_required
-def speech_to_text(request):
+def speech_to_text(request,primary_key):
     Description=request.POST.get('Description')
     r=sr.Recognizer()
     mic=sr.Microphone()
@@ -143,7 +146,7 @@ def speech_to_text(request):
         output = "Could not request results; {0}".format(e)
     Description=output
     Description.capitalize()
-    patient=Patient.objects.all().first()
+    patient=Patient.objects.get(id=primary_key)
     user=request.user
     doctor=Doctor.objects.get(user=user)
     prescription=Prescription(Doctor=doctor,patient=patient)
@@ -164,7 +167,7 @@ def speech_to_text(request):
     pdf = render_to_pdf('Prescription.html', data)
     subject='Prescription'
     from_=EMAIL_HOST_USER
-    to=['kadampallypraneeth987@gmail.com']
+    to=[patient.email]
     body='Prescription'
     email=EmailMultiAlternatives(subject,body,from_,to)
     email.attach('Prescription.pdf',pdf,'application/pdf')
@@ -177,7 +180,7 @@ def speech_to_text(request):
 
 def DoctorComplaintView(request):
     doctor=Doctor.objects.get(user=request.user)
-    complaints=Complaint.objects.filter(Doctor=doctor)
+    complaints=Complaint.objects.filter(Doctor=doctor).order_by('Date')
     template_name='DoctorComplaintView.html'
     return render(request,template_name,{"complaints":complaints,'doctor':doctor})
 
