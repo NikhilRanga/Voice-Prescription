@@ -1,7 +1,43 @@
 {% extends 'base.html' %}
 {% load static %}
 {%block css %}
-<link rel='stylesheet' href='{% static "css/main.css" %}' type='text/css'>
+<style>
+  .container  {
+    width: 100%;
+  }
+  .content-section  {
+    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border: 3px;
+    border-radius: 12px;
+    position: relative;
+    left: 260px;
+    top:20px;
+  }
+  .content-section h2 {
+    color: yellowgreen;
+    font-size: 30pt;
+  }
+  .content-section .media {
+    border:10px yellow;
+    border-style: ridge;
+    border-radius: 40px;
+    
+  
+  }
+  .row .content-section {
+    width: 50%;
+  }
+  .content-section h2{
+    font-weight: 400;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  }
+  .content-section .media  h4  {
+    color:blueviolet;
+    color-interpolation-filters: sRGB;
+    font-weight: 1000;
+    font-family: 'Times New Roman', Times, serif
+  }
+</style>
 {% endblock %}
 {% block content %}
 <div class="content-section mt-3 p-3">

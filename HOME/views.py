@@ -119,11 +119,17 @@ def ComplaintRegistration(request):
         complaintform=ComplaintRegisterForm(prefix='complaintform')
         return render(request,'ComplaintRegistration.html',{'complaintform':complaintform})
 
+@login_required
 def ComplaintListView(request):
     patient=Patient.objects.get(user=request.user)
     complaints=Complaint.objects.filter(patient=patient).values()
     template_name='ComplaintView.html'
     return render(request,template_name,context={'complaints':complaints,'patient':patient})
+
+@login_required
+def ComplaintDetailView(request,id):
+    complaint=Complaint.objects.get(id=id)
+    return render(request,'ComplaintDetail.html',{'complaint':complaint})
 
 
 @login_required

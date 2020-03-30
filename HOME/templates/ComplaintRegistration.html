@@ -3,8 +3,24 @@
 {% load crispy_forms_tags %}
 {% block css %}
 <style>
+  .btn:hover{
+    background-color:black;
+  }
   .content-section {
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+   
+    border-style: outset;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); 
+    
+  }
+  .content-section .container {
+    width: 70%;
+  }
+   legend h3 {
+    font-weight: 1000;
+    color:yellowgreen;
+  }
+  .form-group {
+    color: tomato;
   }
 </style>
 {% endblock %}
@@ -12,8 +28,8 @@
 <div class='content-section p-3 m-3'>
     <form class='form-group' method='POST' enctype="multipart/form-data">
       {% csrf_token %}
-      <div class='container mt-3 pd-3'>
-          <fieldset class='form-group border p-3 m-3'>  
+      <div class='container mt-3 p-3'>
+          <fieldset class='form-group border p-4 m-3'>  
             <legend>
                <h3> Complaint Form </h3>
             </legend>

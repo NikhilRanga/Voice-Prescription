@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+<style>
+    
+    a .btn:hover {
+        color: turquoise;
+    }
+    .container .content-section {
+        box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        width: 50%;
+        left:400px;
+    }
+    .content-section h3 {
+        font-weight: 1000;
+        color: yellowgreen;
+
+    }
+    .content-section .media {
+        border:groove rebeccapurple;
+        border-radius: 10px;
+    }
+    .content-section .media .media-body  .btn:hover{
+        color: turquoise;
+        background-color:mediumslateblue;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class='row'>
+<div class='container-fluid'>
+    <section class='content-section m-3 p-4'>
+        <h3>Complaint Details</h3>
+        <section class="media border p-3 mt-2">
+            <section class="media-body p-3">
+                <h4><b>Complaint:</b> {{complaint.Complaint_Name}}</h4><small>Posted on {{complaint.Date | date}}</small>
+                <h6><b>Sympton 1:</b> {{complaint.Symptom1}}</h6>
+                <h6><b>Symptom 2:</b> {{complaint.Symptom2}}</h6>
+                <h6><b>Description:</b> {{complaint.Description}}</h6>
+                <h6><b>Registered Doctor:</b> {{complaint.Doctor.user.username}},{{complaint.Doctor.Specialization}}</h6>
+            </section>
+        </section>
+    </section>
+</div>
+</div>
+{% endblock %}

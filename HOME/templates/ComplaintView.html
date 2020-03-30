@@ -1,15 +1,44 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block css %}
+<style>
+    a .btn:hover {
+        color: turquoise;
+    }
+    .container .content-section {
+        box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        width: 50%;
+        left:400px;
+    }
+    .content-section h3 {
+        font-weight: 1000;
+        color: yellowgreen;
+
+    }
+    .content-section .media {
+        border:groove rebeccapurple;
+        border-radius: 10px;
+    }
+    .content-section .media .media-body  .btn:hover{
+        color: turquoise;
+        background-color:mediumslateblue;
+    }
+
+</style>
+{% endblock %}
 {% block content %}
-<section class='section m-5 p-4'>
+<div class='container'>
+<section class='content-section m-5 p-4'>
     <h3>Your Registered Complaints</h3>
     {%for complaint in complaints %}
     <section class="media border p-3 mt-2">
         <section class="media-body p-3">
-            <h4>Complaint:<a href="#">{{complaint.Complaint_Name}}</a></h4><small>Posted on {{complaint.Date | date}}</small>
+            <h4>Complaint:<a href="{% url 'ComplaintDetail' complaint.id %}">{{complaint.Complaint_Name}}</a></h4><small>Posted on {{complaint.Date | date}}</small>
             <h6>Registered Doctor:{{patient.doctor.user.username}},{{patient.doctor.Specialization}}</h6>
         </section>
     </section>
     {%endfor%}
+</section>
+</div>
 
 {% endblock %}

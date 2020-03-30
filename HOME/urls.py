@@ -19,6 +19,7 @@ urlpatterns = [
     path('DoctorProfile',views.DoctorProfile,name='DoctorProfile'),
     path('ComplaintRegistration',views.ComplaintRegistration,name='ComplaintRegistration'),
     path('ComplaintView',views.ComplaintListView,name='ComplaintView'),
+    path('ComplaintView/<int:id>/',views.ComplaintDetailView,name='ComplaintDetail'),
     path('pdf',views.GeneratePdf,name='pdf'),
     path('recording/<int:primary_key>/',views.speech_to_text,name='recording'),
     path('PrescriptionForm/<int:primary_key>/',views.PrescriptionForm,name='PrescriptionForm'),
