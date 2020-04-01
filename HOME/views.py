@@ -131,6 +131,11 @@ def ComplaintDetailView(request,id):
     complaint=Complaint.objects.get(id=id)
     return render(request,'ComplaintDetail.html',{'complaint':complaint})
 
+@login_required
+def DoctorComplaintDetailView(request,id):
+    complaint=Complaint.objects.get(id=id)
+    return render(request,'DoctorComplaintDetailView.html',{'complaint':complaint})
+
 
 @login_required
 def PrescriptionForm(request,primary_key):
@@ -152,7 +157,7 @@ def speech_to_text(request,primary_key):
         output = "Could not request results; {0}".format(e)
     Description=output
     Description.capitalize()
-    patient=Patient.objects.get(id=primary_key)
+    patient=Patient.objects.get(user_id=primary_key)
     user=request.user
     doctor=Doctor.objects.get(user=user)
     prescription=Prescription(Doctor=doctor,patient=patient)
