@@ -30,14 +30,14 @@
 <div class='container'>
 <section class='content-section m-5 p-4'>
     <h3>Your Registered Complaints</h3>
-    {%for complaint in complaints %}
+    {% for complaint in complaints %}
     <section class="media border p-3 mt-2">
         <section class="media-body p-3">
             <h4>Complaint:<a href="{% url 'ComplaintDetail' complaint.id %}">{{complaint.Complaint_Name}}</a></h4><small>Posted on {{complaint.Date | date}}</small>
-            <h6>Registered Doctor:{{patient.doctor.user.username}},{{patient.doctor.Specialization}}</h6>
+            <h6>Registered Doctor:{{complaint.Doctor.user.username}},{{complaint.Doctor.Specialization}}</h6>
         </section>
     </section>
-    {%endfor%}
+    {% endfor %}
 </section>
 </div>
 

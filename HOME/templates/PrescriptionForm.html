@@ -50,7 +50,7 @@
                     </div>
                   </div>
                   {% if flag  %}
-                  <a href="{% url 'pdf' %}" class="btn btn-info" role="button">Generate PDF</a>
+                  <a href="{% url 'pdf' primary_key %}" class="btn btn-info" role="button">Generate PDF</a>
                   {% endif %}
               </div>
          </fieldset>
@@ -60,7 +60,7 @@
   html='<div class="spinner-border spinner-border-sm"></div>';
   var c=document.querySelector('.fa').addEventListener('click',function(){
     var element=document.querySelector('.fa');
-    element.insertAdjacentHTML('beforebegin',html)
+    element.insertAdjacentHTML('afterend',html)
   });
 </script>
 

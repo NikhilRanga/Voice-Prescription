@@ -5,7 +5,6 @@ from .forms import DoctorRegisterForm,ComplaintRegisterForm
 from .models import Users,Doctor,Patient,Complaint,Prescription
 from django import forms
 from .utils import render_to_pdf
-from django.views.generic import ListView,DetailView
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail,EmailMessage,EmailMultiAlternatives
 import speech_recognition as sr
@@ -46,9 +45,7 @@ def patient_signup(request):
             user = userform.save()
             user.role = Users.PATIENT
             user.save()
-            user1=Users.objects.get(username=request.POST.get('Doctor'))
-            doctor=Doctor.objects.get(user=user1)
-            patient = Patient(user=user,doctor=doctor)
+            patient = Patient(user=user)
             patient.save()
             username = userform.cleaned_data.get('username')
             messages.success(request,f'Account created for {username}')
@@ -85,14 +82,15 @@ def doctor_signup(request):
 
 
 @login_required
-def GeneratePdf(request):
-    DoctorName=request.user.username
-    Date=datetime.date.today
-    doctor=Doctor.objects.get(user=request.user)
-    prescription=Prescription.objects.get(Doctor=doctor)
+def GeneratePdf(request,primary_key):
+    complaint=Complaint.objects.get(id=primary_key)
+    prescription=Prescription.objects.get(complaint=complaint)
+    doctor=complaint.Doctor
+    DoctorName=doctor.user.username
     Description=prescription.Description
     Specialization=doctor.Specialization
-    image=doctor.Signature.url
+    Date=prescription.Date
+    image=doctor.Signature
     data = { 
         'DoctorName':DoctorName,
         'Date':Date,
@@ -111,20 +109,23 @@ def ComplaintRegistration(request):
         if complaintform.is_valid():
             complaint=complaintform.save(commit=False)
             complaint.patient=Patient.objects.get(user=request.user)
-            complaint.Doctor=Doctor.objects.get(user=complaint.patient.doctor)
+            user1=Users.objects.get(username=request.POST.get('Doctor'))
+            doctor=Doctor.objects.get(user=user1)
+            complaint.Doctor=doctor
             complaint.save()
             messages.success(request,f'Complaint Registered')
             return redirect('HomePage')
     else:
+        Doctors=Doctor.objects.all()
         complaintform=ComplaintRegisterForm(prefix='complaintform')
-        return render(request,'ComplaintRegistration.html',{'complaintform':complaintform})
+        return render(request,'ComplaintRegistration.html',{'complaintform':complaintform,'Doctors':Doctors})
 
 @login_required
 def ComplaintListView(request):
     patient=Patient.objects.get(user=request.user)
     complaints=Complaint.objects.filter(patient=patient).values()
     template_name='ComplaintView.html'
-    return render(request,template_name,context={'complaints':complaints,'patient':patient})
+    return render(request,template_name,context={'complaints':complaints})
 
 @login_required
 def ComplaintDetailView(request,id):
@@ -154,21 +155,23 @@ def speech_to_text(request,primary_key):
     except sr.UnknownValueError:
         output = "Could not understand audio"
     except sr.RequestError as e:
-        output = "Could not request results; {0}".format(e)
-    Description=output
+        output = "Could not request results; {0}".format(e)   
+    if(not Description):
+        Description=output
     Description.capitalize()
-    patient=Patient.objects.get(user_id=primary_key)
-    user=request.user
-    doctor=Doctor.objects.get(user=user)
+    complaint=Complaint.objects.get(id=primary_key)
+    patient=complaint.patient
+    doctor=complaint.Doctor
     prescription=Prescription(Doctor=doctor,patient=patient)
     prescription.Description=Description
+    prescription.complaint=complaint
     prescription.save()
     DoctorName=request.user.username
     Date=datetime.date.today
     doctor=Doctor.objects.get(user=request.user)
-    prescription=Prescription.objects.get(Doctor=doctor)
+    prescription=Prescription.objects.get(complaint=complaint)
     Description=prescription.Description
-    Specialization=doctor.Specialization
+    Specialization=prescription.Doctor.Specialization
     data = { 
         'DoctorName':DoctorName,
         'Date':Date,
@@ -178,13 +181,14 @@ def speech_to_text(request,primary_key):
     pdf = render_to_pdf('Prescription.html', data)
     subject='Prescription'
     from_=EMAIL_HOST_USER
-    to=[patient.email]
+    to=[patient.user.email]
     body='Prescription'
     email=EmailMultiAlternatives(subject,body,from_,to)
     email.attach('Prescription.pdf',pdf,'application/pdf')
     email.send()
     data={
-        'flag':True
+        'flag':True,
+        'primary_key':primary_key
     }
     return render(request,'PrescriptionForm.html',data)
 

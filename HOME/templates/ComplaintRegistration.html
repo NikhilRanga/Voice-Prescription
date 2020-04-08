@@ -36,6 +36,15 @@
             <div class='form-group'>
               {{complaintform | crispy}}
             </div>
+            <div class='form-group'>
+              <label for='Doctor'>Doctors Available</label>
+              <br>
+              <select id='Doctor' name=Doctor>
+              {% for doctor in Doctors %}
+                <option value={{doctor}}>{{doctor}},{{doctor.Specialization}}</option>
+              {% endfor %}
+              </select>
+            </div>
             <br>
             <div class='row'>
               <div class='col-sm-2'>

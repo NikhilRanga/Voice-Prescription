@@ -22,4 +22,4 @@ class DoctorRegisterForm(forms.ModelForm):
 class ComplaintRegisterForm(forms.ModelForm):
     class Meta:
         model=Complaint
-        fields=['Complaint_Name','Symptom1','Symptom2','Description',]
+        fields=['Complaint_Name','Symptom1','Symptom2','Description']

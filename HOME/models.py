@@ -31,15 +31,14 @@ class Doctor(models.Model):
     Education=models.CharField(max_length=500)
     Specialization=models.CharField(max_length=500)
     AadharNo=models.IntegerField()
-    License=models.FileField(upload_to='License')
-    Signature=models.ImageField(upload_to='Signature')
+    License=models.ImageField(upload_to='License/')
+    Signature=models.ImageField(upload_to='Signature/')
 
     def __str__(self):
         return self.user.username
 
 class Patient(models.Model):
     user=models.OneToOneField(Users,on_delete=models.CASCADE,primary_key=True)
-    doctor=models.ForeignKey(Doctor,on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.username
